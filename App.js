@@ -1,37 +1,33 @@
 import { FlatList, SafeAreaView, StatusBar, StyleSheet } from 'react-native'
-
-import { useEffect, useState } from 'react'
+import NotaEditor from './src/componentes/NotaEditor'
 import { Nota } from './src/componentes/Nota'
-import { criaTabela } from './src/servicos/Notas'
+import { useEffect, useState } from 'react'
+import { buscaNotas, criaTabela } from './src/servicos/Notas'
 
 export default function App() {
-
- // toda a vez que recarregamos nossa aplicacao ele chama a funcao e cria uma tabela 
   useEffect(() => {
     criaTabela()
+    mostraNotas()
   }, [])
-
   const [notas, setNotas] = useState([])
 
   async function mostraNotas() {
-    
+    const todasNotas = await buscaNotas()
     setNotas(todasNotas)
+    console.log(todasNotas)
   }
-
   return (
     <SafeAreaView style={estilos.container}>
       <FlatList
         data={notas}
-        keyExtractor={nota => nota[0]}
         renderItem={nota => <Nota {...nota} />}
+        keyExtractor={nota => nota.id}
       />
-
       <NotaEditor mostraNotas={mostraNotas} />
       <StatusBar />
     </SafeAreaView>
   )
 }
-
 const estilos = StyleSheet.create({
   container: {
     flex: 1,
